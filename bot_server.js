@@ -1,8 +1,10 @@
-
 require('dotenv').config();
 const express = require('express');
 const bodyParser = require('body-parser');
 const morgan = require('morgan');
+const cors = require('cors');
+const helmet = require('helmet');
+const rateLimit = require('express-rate-limit');
 const VisaBotModule = require('./bot_visa_module');
 
 // Initialize Express and Visa Bot Module
@@ -10,7 +12,19 @@ const app = express();
 const visaBot = new VisaBotModule();
 const PORT = process.env.PORT || 7001;
 
-// Middleware
+// Security middleware
+app.use(helmet());
+app.use(cors());
+
+// Rate limiting
+const limiter = rateLimit({
+  windowMs: 15 * 60 * 1000, // 15 minutes
+  max: 100, // limit each IP to 100 requests per windowMs
+  message: 'Too many requests from this IP, please try again later'
+});
+app.use('/webhook', limiter);
+
+// Logging and parsing middleware
 app.use(morgan('dev'));
 app.use(bodyParser.json({ limit: '10mb' }));
 app.use(express.urlencoded({ extended: true }));
@@ -90,6 +104,15 @@ app.get('/health', (req, res) => {
   const status = visaBot.getHealthStatus();
   visaBot.log.info('Health check requested', status);
   res.status(200).json(status);
+});
+
+// Root route for Railway health checks
+app.get('/', (req, res) => {
+  res.status(200).json({ 
+    status: 'online',
+    service: 'WhatsApp Visa Search Bot',
+    version: process.env.npm_package_version || '1.0.0'
+  });
 });
 
 // Error handlers
