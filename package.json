@@ -1,15 +1,32 @@
 {
+  "name": "webhook-visa-assistant",
+  "version": "1.0.0",
+  "description": "Webhook Visa Assistant Bot",
+  "main": "bot_server.js",
+  "scripts": {
+    "start": "node bot_server.js",
+    "dev": "nodemon bot_server.js"
+  },
   "dependencies": {
     "@pinecone-database/pinecone": "^4.1.0",
     "@supabase/supabase-js": "^2.48.1",
     "axios": "^1.7.9",
     "body-parser": "^1.20.3",
+    "cors": "^2.8.5",
     "dayjs": "^1.11.13",
     "dotenv": "^16.4.7",
     "express": "^4.21.2",
+    "express-rate-limit": "^7.0.0",
+    "helmet": "^7.0.0",
     "morgan": "^1.10.0",
     "openai": "^4.82.0",
     "supabase": "^2.9.6",
     "uuid": "^11.0.5"
+  },
+  "devDependencies": {
+    "nodemon": "^3.0.1"
+  },
+  "engines": {
+    "node": ">=18.0.0"
   }
 }
